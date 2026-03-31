@@ -1,0 +1,54 @@
+#pragma once
+
+#include "secrets.h"  // WiFi credentials and server URL (not tracked by git)
+#define WIFI_CONNECTED_BIT BIT0
+
+// Button configuration
+#define REWIND_BUTTON_PIN GPIO_NUM_0
+#define START_BUTTON_PIN GPIO_NUM_2
+#define STOP_BUTTON_PIN GPIO_NUM_12
+#define BUTTON_HOLD_MS 3000 // How long the rewind button must be held (ms)
+#define BUTTON_POLL_MS 50   // How often to poll the button states(ms)
+#define FILES_TO_DELETE 4   // Number of audio files to delete when the rewind button is held
+
+
+// WiFi backoff configuration
+#define UPLOAD_FAIL_LIMIT 10
+#define WIFI_RETRY_DELAY_MS 600000  // 10 minutes
+
+// Watchdog timeout for the ReadAudioInput task (seconds).
+#define AUDIO_WDT_TIMEOUT_S 10
+
+// HTTP client timeout for StreamToServer (milliseconds)
+#define HTTP_TIMEOUT_MS 10000
+
+// SNTP / RTC configuration
+#define NTP_SERVER  "pool.ntp.org"
+#define TIMEZONE    "AEST-10AEDT,M10.1.0,M4.1.0/3"  // Sydney, Australia (change to your timezone as needed)
+
+// Clipping detection threshold (absolute value)
+#define CLIPPING_THRESHOLD 32000
+
+// I2S audio configuration (INMP441 microphone)
+#define I2S_SAMPLE_RATE     16000               // Sample rate in Hz
+#define I2S_BIT_DEPTH       I2S_DATA_BIT_WIDTH_32BIT  // INMP441 outputs 32-bit, MSB-aligned — shifted to 16-bit PCM in ReadAudioInput
+
+// I2S pin definitions (INMP441 microphone)
+#define I2S_BCLK    GPIO_NUM_14
+#define I2S_WS      GPIO_NUM_15
+#define I2S_DIN     GPIO_NUM_13
+
+// LED pin definition (WS2812)
+#define LED_PIN     GPIO_NUM_4
+
+// Defines the bitshift to apply to the LED color values to achieve the desired brightness (0 = full brightness, 1 = half brightness, etc.)
+#define LED_BRIGHTNESS_SHIFT 2 // 1/4 brightness
+
+
+
+// SD card pin definitions
+#define SD_MOSI  GPIO_NUM_23
+#define SD_MISO  GPIO_NUM_19
+#define SD_CLK   GPIO_NUM_18
+#define SD_CS    GPIO_NUM_5
+#define SD_MOUNT "/sdcard"
