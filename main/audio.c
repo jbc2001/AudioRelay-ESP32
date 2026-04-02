@@ -69,11 +69,26 @@ void ReadAudioInput(void* pvParameters) {
         }
 
         //Convert the 32-bit raw data from the INMP441 to 16-bit PCM format by right-shifting and truncating
+        int16_t peak = 0;
         for (int i = 0; i < 1023; i++) {
             audioBuffer[i] = (int16_t)(buffer[i] >> 16);
             if (audioBuffer[i] > CLIPPING_THRESHOLD || audioBuffer[i] < -CLIPPING_THRESHOLD) {
                 atomic_store(&clippingActive, true); // Flag clipping for ClippingIndicatorTask
             }
+            int16_t abs_val = audioBuffer[i] < 0 ? -audioBuffer[i] : audioBuffer[i];
+            if (abs_val > peak) peak = abs_val;
+        }
+
+        // Mic disconnect detection: a real INMP441 always has some noise — sustained near-zero peak likely means the mic is not connected
+        static int silentBuffers = 0;
+        if (peak < MIC_SILENCE_THRESHOLD) {
+            silentBuffers++;
+            if (silentBuffers == MIC_SILENCE_BUFFERS) {
+                printf("Warning: microphone may be disconnected (peak amplitude below %d for ~%dms)\n",
+                       MIC_SILENCE_THRESHOLD, (MIC_SILENCE_BUFFERS * 1023 * 1000) / I2S_SAMPLE_RATE);
+            }
+        } else {
+            silentBuffers = 0;
         }
 
         //Send the audio buffer to the queue for processing by other tasks. If the queue is full, print an error and free the buffer
