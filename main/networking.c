@@ -130,6 +130,15 @@ void StreamToServer(void* pvParameters) {
         };
         esp_http_client_handle_t client = esp_http_client_init(&config);
         esp_http_client_set_header(client, "Content-Type", "application/octet-stream");
+        esp_http_client_set_header(client, "X-API-Key", API_KEY);
+
+        //extract filename from path and strip audio_ prefix
+        char* filename = strrchr(filePath, '/');
+        filename = filename ? filename + 1 : filePath;
+        if (strncmp(filename, "audio_", 6) == 0) {
+            filename += 6;
+        }
+        esp_http_client_set_header(client, "X-Filename", filename);
 
         char chunk[1024];
         bool uploadOk = false;
