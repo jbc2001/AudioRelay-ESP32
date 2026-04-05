@@ -1,0 +1,58 @@
+services:
+  audiorelay-server:
+    build:
+      dockerfile_inline: |
+        FROM python:3.11-slim
+        RUN pip install --no-cache-dir flask
+        WORKDIR /app
+        COPY <<'EOF' /app/server.py
+        from flask import Flask, request
+        from werkzeug.utils import secure_filename
+        import os
+        from datetime import datetime
+
+        app = Flask(__name__)
+
+        API_KEY = ""  # Set this to a random string
+        UPLOAD_DIR = "/data/audio"
+        app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024
+
+        os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+        @app.route("/upload", methods=["POST"])
+        def upload():
+            if request.headers.get("X-API-Key") != API_KEY:
+                return "Unauthorized", 401
+
+            raw_filename = request.headers.get("X-Filename", f"unknown_{datetime.now().strftime('%Y%m%d_%H%M%S')}.raw")
+            filename = secure_filename(raw_filename)
+
+            if not filename:
+                return "Invalid filename", 400
+
+            if not filename.endswith(".raw"):
+                return "Only .raw files accepted", 400
+
+            filepath = os.path.join(UPLOAD_DIR, filename)
+            with open(filepath, "wb") as f:
+                f.write(request.data)
+
+            print(f"Saved {filename} ({len(request.data)} bytes)")
+            return "OK", 200
+
+        @app.route("/health", methods=["GET"])
+        def health():
+            files = os.listdir(UPLOAD_DIR)
+            total_size = sum(os.path.getsize(os.path.join(UPLOAD_DIR, f)) for f in files)
+            total_mb = total_size / (1024 * 1024)
+            return f"AudioRelay server running. {len(files)} files received ({total_mb:.1f} MB).", 200
+
+        if __name__ == "__main__":
+            app.run(host="0.0.0.0", port=5000)
+        EOF
+        CMD ["python", "server.py"]
+    ports:
+      - '5000:5000'
+    restart: unless-stopped
+    volumes:
+      - # /mnt/your-pool/AudioRelay:/data/audio

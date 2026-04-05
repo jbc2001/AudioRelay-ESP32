@@ -29,26 +29,30 @@
 // Clipping detection threshold (absolute value)
 #define CLIPPING_THRESHOLD 32000
 
+// Microphone disconnect detection
+#define MIC_SILENCE_THRESHOLD 10    // Peak amplitude (absolute) below which a buffer is considered silent
+#define MIC_SILENCE_BUFFERS   10    // Consecutive silent buffers before logging a disconnect warning (~640ms at 16kHz)
+
 // I2S audio configuration (INMP441 microphone)
 #define I2S_SAMPLE_RATE     16000               // Sample rate in Hz
 #define I2S_BIT_DEPTH       I2S_DATA_BIT_WIDTH_32BIT  // INMP441 outputs 32-bit, MSB-aligned — shifted to 16-bit PCM in ReadAudioInput
 
 // I2S pin definitions (INMP441 microphone)
-#define I2S_BCLK    GPIO_NUM_14
-#define I2S_WS      GPIO_NUM_15
-#define I2S_DIN     GPIO_NUM_13
+#define I2S_BCLK    GPIO_NUM_15
+#define I2S_WS      GPIO_NUM_16
+#define I2S_DIN     GPIO_NUM_4
 
 // LED pin definition (WS2812)
-#define LED_PIN     GPIO_NUM_4
+#define LED_PIN     GPIO_NUM_23
 
 // Defines the bitshift to apply to the LED color values to achieve the desired brightness (0 = full brightness, 1 = half brightness, etc.)
-#define LED_BRIGHTNESS_SHIFT 2 // 1/4 brightness
+#define LED_BRIGHTNESS_SHIFT 4 // 1/16 brightness
 
 
 
 // SD card pin definitions
-#define SD_MOSI  GPIO_NUM_23
-#define SD_MISO  GPIO_NUM_19
-#define SD_CLK   GPIO_NUM_18
+#define SD_MOSI  GPIO_NUM_18
+#define SD_MISO  GPIO_NUM_21
+#define SD_CLK   GPIO_NUM_19
 #define SD_CS    GPIO_NUM_5
 #define SD_MOUNT "/sdcard"

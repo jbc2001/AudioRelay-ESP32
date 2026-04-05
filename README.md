@@ -34,17 +34,17 @@ All pin definitions are in `main/config.h` and can be changed to match your wiri
 
 | Signal | GPIO |
 |---|---|
-| BCLK | 14 |
-| WS | 15 |
-| DIN | 13 |
+| BCLK | 15 |
+| WS | 16 |
+| DIN | 4 |
 
 ### MicroSD Card (SPI)
 
 | Signal | GPIO |
 |---|---|
-| MOSI | 23 |
-| MISO | 19 |
-| CLK | 18 |
+| MOSI | 18 |
+| MISO | 21 |
+| CLK | 19 |
 | CS | 5 |
 
 ### Buttons
@@ -59,7 +59,7 @@ All pin definitions are in `main/config.h` and can be changed to match your wiri
 
 | Pin | GPIO |
 |---|---|
-| Data | 4 |
+| Data | 23 |
 
 ### LED Status Colours
 
@@ -74,7 +74,7 @@ All pin definitions are in `main/config.h` and can be changed to match your wiri
 
 ## Configuration
 
-### WiFi and server
+### WiFi, server, and API key
 
 Rename `main/secrets.h.example` to `main/secrets.h` and fill in your details:
 
@@ -82,6 +82,7 @@ Rename `main/secrets.h.example` to `main/secrets.h` and fill in your details:
 #define WIFI_SSID  "your-network"
 #define WIFI_PASS  "your-password"
 #define SERVER_URL "http://your-server/upload"
+#define API_KEY    "your-api-key"  // must match the API_KEY set in docker-compose.yml
 ```
 
 `main/secrets.h` is in `.gitignore` so it won't be committed if you decide to fork or contribute.
@@ -137,4 +138,23 @@ Audio goes: `ReadAudioInput` -> queue -> `WriteToSD` -> SD card -> `StreamToServ
 
 ## Server
 
-Work in progress. Will handle POST uploads and provide a web UI for playback.
+A minimal Flask server is included in `server/docker-compose.yml`. It accepts POST uploads authenticated with an API key and saves files to a local volume.
+
+### Deployment
+
+1. Edit `docker-compose.yml` and set `API_KEY` to a random string, and uncomment/update the volume path to point to where you want audio files stored:
+
+   ```yaml
+   volumes:
+     - /mnt/your-pool/AudioRelay:/data/audio
+   ```
+
+2. Start the server:
+
+   ```bash
+   docker compose -f server/docker-compose.yml up -d
+   ```
+
+3. The server listens on port `5000`. Set `SERVER_URL` in `secrets.h` to `http://your-server:5000/upload` and `API_KEY` to the same value you set in `docker-compose.yml`.
+
+A `/health` endpoint is available at `http://your-server:5000/health` and returns the number of files received and total size.
