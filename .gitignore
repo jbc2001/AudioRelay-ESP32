@@ -1,9 +1,9 @@
-build/
-sdkconfig
-sdkconfig.old
 .vscode/
 *.pyc
-__pycache__/
-managed_components/
-dependencies.lock
-main/secrets.h
+firmware/__pycache__/
+firmware/managed_components/
+firmware/dependencies.lock
+firmware/main/secrets.h
+firmware/build/
+firmware/sdkconfig
+firmware/sdkconfig.old
