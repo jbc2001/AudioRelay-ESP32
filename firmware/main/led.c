@@ -1,3 +1,6 @@
+// Copyright (c) 2026 James Collins
+// Licensed freely under the MIT License. See LICENSE in the project root for details.
+
 #include "driver/gpio.h"
 #include "led_strip.h"
 #include "freertos/FreeRTOS.h"
