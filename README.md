@@ -51,9 +51,9 @@ All pin definitions are in `main/config.h` and can be changed to match your wiri
 
 | Button | GPIO | Behaviour |
 |---|---|---|
-| Start | 2 | Resume recording |
-| Stop | 12 | Pause recording, delete in-progress file |
-| Rewind | 0 | Hold 3s to delete last ~2 minutes |
+| Start | 12 | Resume recording |
+| Stop | 14 | Pause recording, delete in-progress file |
+| Rewind | 13 | Hold 3s to delete last ~2 minutes |
 
 ### LED
 

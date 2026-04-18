@@ -7,9 +7,9 @@
 #define WIFI_CONNECTED_BIT BIT0
 
 // Button configuration
-#define REWIND_BUTTON_PIN GPIO_NUM_0
-#define START_BUTTON_PIN GPIO_NUM_2
-#define STOP_BUTTON_PIN GPIO_NUM_12
+#define REWIND_BUTTON_PIN GPIO_NUM_13
+#define START_BUTTON_PIN GPIO_NUM_12
+#define STOP_BUTTON_PIN GPIO_NUM_14
 #define BUTTON_HOLD_MS 3000 // How long the rewind button must be held (ms)
 #define BUTTON_POLL_MS 50   // How often to poll the button states(ms)
 #define FILES_TO_DELETE 4   // Number of audio files to delete when the rewind button is held
